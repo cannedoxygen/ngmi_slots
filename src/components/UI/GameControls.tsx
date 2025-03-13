@@ -67,61 +67,73 @@ const GameControls: React.FC<GameControlsProps> = ({
   };
 
   return (
-    <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-        {/* Bet Controls - only show if not in free spins mode */}
-        {!freeSpinsActive && (
-          <div className="bet-controls flex flex-col sm:flex-row items-center gap-3">
-            <span className="text-gray-400 text-sm font-medium">BET:</span>
+    <div className="bg-gray-900 rounded-lg p-3 border border-gray-700 flex flex-col h-full">
+      {/* Balance display */}
+      <div className="balance-display mb-6 p-2 bg-gray-800 rounded border border-gray-700 text-center">
+        <div className="text-xs text-gray-400">Balance:</div>
+        <div className="text-blue-300 font-medium">{balance} TARDI</div>
+      </div>
+      
+      {/* Bet Controls - only show if not in free spins mode */}
+      {!freeSpinsActive && (
+        <div className="bet-controls space-y-4 mb-6">
+          <div className="flex items-center justify-between">
+            <span className="text-gray-400 text-sm font-medium">BET AMOUNT:</span>
+          </div>
+          
+          <div className="flex items-center justify-center">
+            <Button
+              onClick={handleDecreaseBet}
+              disabled={spinning || disabled || betAmount <= 5}
+              variant="ghost"
+              size="small"
+              className="text-lg font-bold h-8 w-8 p-0 flex items-center justify-center"
+            >
+              -
+            </Button>
             
-            <div className="flex items-center">
-              <Button
-                onClick={handleDecreaseBet}
-                disabled={spinning || disabled || betAmount <= 5}
-                variant="ghost"
-                size="small"
-                className="text-lg font-bold"
-              >
-                -
-              </Button>
-              
-              <div className="bet-amount-display mx-2 px-3 py-1 min-w-[80px] text-center bg-gray-800 rounded border border-gray-700">
-                <span className="font-medium text-blue-300">{betAmount}</span>
-                <span className="ml-1 text-xs text-gray-400">TARDI</span>
-              </div>
-              
-              <Button
-                onClick={handleIncreaseBet}
-                disabled={spinning || disabled || betAmount >= balance}
-                variant="ghost"
-                size="small"
-                className="text-lg font-bold"
-              >
-                +
-              </Button>
+            <div className="bet-amount-display mx-2 px-3 py-1 min-w-[100px] text-center bg-gray-800 rounded border border-gray-700">
+              <span className="font-medium text-blue-300">{betAmount}</span>
+              <span className="ml-1 text-xs text-gray-400">TARDI</span>
             </div>
             
             <Button
-              onClick={handleMaxBet}
+              onClick={handleIncreaseBet}
               disabled={spinning || disabled || betAmount >= balance}
-              variant="outline"
+              variant="ghost"
               size="small"
+              className="text-lg font-bold h-8 w-8 p-0 flex items-center justify-center"
             >
-              MAX BET
+              +
             </Button>
           </div>
-        )}
-        
-        {/* Spin Button */}
+          
+          <Button
+            onClick={handleMaxBet}
+            disabled={spinning || disabled || betAmount >= balance}
+            variant="outline"
+            size="small"
+            className="w-full"
+          >
+            MAX BET
+          </Button>
+        </div>
+      )}
+      
+      {/* Spacer to push the spin button to the bottom */}
+      <div className="flex-grow"></div>
+      
+      {/* Spin Button - Hidden on mobile as it's moved to bottom of slot machine */}
+      <div className="hidden lg:block mt-4">
         <Button
           onClick={onSpin}
           disabled={disabled || spinning}
           isLoading={spinning}
           variant="primary"
           size="large"
-          className="spin-button min-w-[120px]"
+          className="spin-button w-full py-4 text-lg"
         >
-          {freeSpinsActive ? 'FREE SPIN' : 'SPIN'}
+          {spinning ? 'SPINNING...' : freeSpinsActive ? 'FREE SPIN' : 'SPIN'}
         </Button>
       </div>
       

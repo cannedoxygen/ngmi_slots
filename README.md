@@ -100,4 +100,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Acknowledgements
 
 - Sui team for the blockchain platform
-- T-NGMI and TARDI token community
+- TARDI Team and Community
+- Canned Oxygen for building this beast
