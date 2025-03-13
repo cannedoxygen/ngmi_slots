@@ -1,0 +1,34 @@
+cat > .gitignore << 'EOL'
+# Dependencies
+/node_modules
+/.pnpm
+/.pnpm-store
+/.pnp
+.pnp.js
+
+# Build outputs
+/.next/
+/out/
+/build
+/dist
+
+# Local env files
+.env*.local
+.env
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE specific files
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+EOL

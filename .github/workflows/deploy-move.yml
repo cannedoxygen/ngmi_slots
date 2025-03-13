@@ -1,0 +1,56 @@
+name: Deploy Move Contracts
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'move/**'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Sui CLI
+        uses: mystenlabs/setup-sui@v1
+        with:
+          version: 'testnet'
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build Move package
+        run: |
+          cd move
+          sui move build
+      
+      - name: Deploy Move package
+        env:
+          ADMIN_PRIVATE_KEY: ${{ secrets.ADMIN_PRIVATE_KEY }}
+          SUI_RPC_URL: ${{ secrets.SUI_RPC_URL }}
+          NEXT_PUBLIC_SUI_NETWORK: ${{ secrets.NEXT_PUBLIC_SUI_NETWORK }}
+        run: |
+          cd move/scripts
+          npx tsx deploy.ts
+      
+      - name: Create deployment record
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: move
+          target-folder: deployments/${{ github.sha }}
+          
+      - name: Create deployment summary
+        run: |
+          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "Move package deployed with commit: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "Network: ${{ secrets.NEXT_PUBLIC_SUI_NETWORK }}" >> $GITHUB_STEP_SUMMARY
+          echo "Package ID: $(cat move/deployed-address.json | jq -r '.packageId')" >> $GITHUB_STEP_SUMMARY

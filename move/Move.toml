@@ -1,0 +1,12 @@
+[package]
+name = "NGMI_Slots"
+version = "0.1.0"
+published-at = "0x0" # This will be replaced by the deployment script
+
+[dependencies]
+Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/testnet" }
+
+[addresses]
+ngmi_slots = "0x0" # This will be replaced by the deployment script
+std = "0x1"
+sui = "0x2"
