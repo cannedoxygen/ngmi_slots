@@ -64,8 +64,8 @@ export const evaluateWin = (
   // Store all symbols in result
   result.symbols = allSymbols;
   
-  // Check for jackpot (all positions have the high-tardi symbol)
-  const isJackpot = allSymbols.every(symbol => symbol === 'high-tardi');
+  // Check for jackpot (all positions have the high-diamond symbol)
+  const isJackpot = allSymbols.every(symbol => symbol === 'high-diamond');
   
   if (isJackpot) {
     // Jackpot win!
@@ -130,7 +130,7 @@ export const checkPaylineWin = (
   const firstSymbol = symbolsOnPayline[0];
   
   // Special symbols that don't form winning combinations by themselves
-  const nonWinningSymbols = ['multiplier-2x', 'multiplier-5x', 'multiplier-10x', 'free-spin'];
+  const nonWinningSymbols = ['multiplier-3x', 'multiplier-5x', 'multiplier-10x', 'free-spin'];
   
   // Skip checking if the first symbol is a special symbol
   if (nonWinningSymbols.includes(firstSymbol)) {

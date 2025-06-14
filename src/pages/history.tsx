@@ -95,8 +95,8 @@ const HistoryPage: React.FC = () => {
   return (
     <>
       <Head>
-        <title>Game History | T-NGMI Slots</title>
-        <meta name="description" content="View your T-NGMI Slots game history and transaction details." />
+        <title>Game History | SimpCity Casino Slots</title>
+        <meta name="description" content="View your SimpCity Casino Slots game history and transaction details." />
       </Head>
 
       <Layout>
@@ -177,11 +177,11 @@ const HistoryPage: React.FC = () => {
                             </button>
                           </td>
                           <td className="px-4 py-3 text-sm text-right text-gray-300">
-                            {tx.betAmount} <span className="text-xs text-gray-400">TARDI</span>
+                            {tx.betAmount} <span className="text-xs text-gray-400">SIMP</span>
                           </td>
                           <td className="px-4 py-3 text-sm text-right font-medium">
                             {tx.winAmount > 0 ? (
-                              <span className="text-green-400">{tx.winAmount} <span className="text-xs">TARDI</span></span>
+                              <span className="text-green-400">{tx.winAmount} <span className="text-xs">SIMP</span></span>
                             ) : (
                               <span className="text-gray-500">0</span>
                             )}

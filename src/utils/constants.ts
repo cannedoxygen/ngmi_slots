@@ -6,21 +6,21 @@
 
 export const constants = {
     // App information
-    appName: 'T-NGMI Slots',
+    appName: 'SimpCity Casino Slots',
     appVersion: '1.0.0',
     
     // Network configuration
-    network: process.env.NEXT_PUBLIC_SUI_NETWORK || 'testnet', // 'mainnet' or 'testnet'
+    network: process.env.NEXT_PUBLIC_SOLANA_NETWORK || 'devnet', // 'mainnet-beta', 'testnet', or 'devnet'
     
     // Contract addresses - these would be populated from environment variables in production
     contractAddress: {
-      packageId: process.env.NEXT_PUBLIC_PACKAGE_ID || '0x123456789abcdef123456789abcdef123456789abcdef123456789abcdef1234',
-      moduleId: 'ngmi_slots',
-      upgradeCapId: process.env.NEXT_PUBLIC_UPGRADE_CAP_ID || '0xabcdef123456789abcdef123456789abcdef123456789abcdef123456789abc'
+      programId: process.env.NEXT_PUBLIC_PROGRAM_ID || 'Simpc1tyS1otsxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+      moduleId: 'simpcity_slots',
+      authorityId: process.env.NEXT_PUBLIC_AUTHORITY_ID || 'Simpc1tyAuth0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
     },
     
     // Token configuration
-    tokenSymbol: 'TARDI',
+    tokenSymbol: 'SIMP',
     tokenDecimals: 9,
     tokenAddress: process.env.NEXT_PUBLIC_TOKEN_ADDRESS || '0x123456789abcdef123456789abcdef123456789abcdef123456789abcdef1234',
     
@@ -42,8 +42,8 @@ export const constants = {
     
     // Local storage keys
     storageKeys: {
-      settings: 'tngmiSlotSettings',
-      gameHistory: 'tngmiGameHistory',
+      settings: 'simpCasinoSettings',
+      gameHistory: 'simpCasinoGameHistory',
       connectedWalletId: 'connectedWalletId',
       walletAddress: 'walletAddress',
     }
@@ -62,7 +62,7 @@ export const constants = {
         'mid-robot': 15,
         'mid-helmet': 10,
         'mid-future': 10,
-        'high-tardi': 5,
+        'high-simp': 5,
         'multiplier-2x': 5,
         'multiplier-5x': 3,
         'multiplier-10x': 2,
@@ -76,7 +76,7 @@ export const constants = {
         'mid-robot': 15,
         'mid-helmet': 10,
         'mid-future': 10,
-        'high-tardi': 5,
+        'high-simp': 5,
         'multiplier-2x': 5,
         'multiplier-5x': 3,
         'multiplier-10x': 2,
@@ -90,7 +90,7 @@ export const constants = {
         'mid-robot': 15,
         'mid-helmet': 10,
         'mid-future': 10,
-        'high-tardi': 5,
+        'high-simp': 5,
         'multiplier-2x': 5,
         'multiplier-5x': 3,
         'multiplier-10x': 2,

@@ -1,6 +1,5 @@
 // src/components/UI/Modals/PaytableModal.tsx
 import React from 'react';
-import Image from 'next/image';
 import Modal from '../../common/Modal';
 import { gameConfig } from '../../../config/gameConfig';
 import { paylines } from '../../../config/paylines';
@@ -21,7 +20,7 @@ const PaytableModal: React.FC<PaytableModalProps> = ({
     }
     acc[symbol.tier].push({ key, ...symbol });
     return acc;
-  }, {} as Record<string, Array<{ key: string; name: string; tier: string; payout: number; imagePath: string; probability?: number }>>);
+  }, {} as Record<string, Array<{ key: string; name: string; tier: string; payout: number; imagePath: string; emoji?: string; probability?: number; multiplier?: number; freeSpins?: number }>>);
 
   return (
     <Modal
@@ -33,9 +32,9 @@ const PaytableModal: React.FC<PaytableModalProps> = ({
       <div className="paytable-content space-y-6 max-h-[70vh] overflow-y-auto pr-2">
         {/* Game Description */}
         <section className="game-description">
-          <h3 className="text-xl font-bold text-blue-400 mb-2">T-NGMI Slots</h3>
+          <h3 className="text-xl font-bold text-blue-400 mb-2">SimpCity Casino Slots</h3>
           <p className="text-gray-300">
-            Spin the reels and match symbols across paylines to win TARDI tokens! 
+            Spin the reels and match symbols across paylines to win SIMP tokens! 
             Match special symbols for multipliers and free spins.
           </p>
         </section>
@@ -54,14 +53,10 @@ const PaytableModal: React.FC<PaytableModalProps> = ({
                     key={symbol.key} 
                     className="flex items-center p-3 bg-gray-800 rounded-lg border border-gray-700"
                   >
-                    <div className="symbol-image w-12 h-12 relative mr-3">
-                      <Image
-                        src={symbol.imagePath}
-                        alt={symbol.name}
-                        fill
-                        sizes="48px"
-                        className="object-contain"
-                      />
+                    <div className="symbol-emoji w-24 h-24 flex items-center justify-center mr-3 bg-gray-900 rounded-md">
+                      <span style={{ fontSize: '5.25rem' }}>
+                        {symbol.emoji || '❓'}
+                      </span>
                     </div>
                     <div>
                       <p className="font-medium text-white">{symbol.name}</p>
@@ -85,14 +80,10 @@ const PaytableModal: React.FC<PaytableModalProps> = ({
                     key={symbol.key} 
                     className="flex items-center p-3 bg-gray-800 rounded-lg border border-gray-700"
                   >
-                    <div className="symbol-image w-12 h-12 relative mr-3">
-                      <Image
-                        src={symbol.imagePath}
-                        alt={symbol.name}
-                        fill
-                        sizes="48px"
-                        className="object-contain"
-                      />
+                    <div className="symbol-emoji w-24 h-24 flex items-center justify-center mr-3 bg-gray-900 rounded-md">
+                      <span style={{ fontSize: '5.25rem' }}>
+                        {symbol.emoji || '❓'}
+                      </span>
                     </div>
                     <div>
                       <p className="font-medium text-white">{symbol.name}</p>
@@ -116,14 +107,10 @@ const PaytableModal: React.FC<PaytableModalProps> = ({
                     key={symbol.key} 
                     className="flex items-center p-3 bg-gray-800 rounded-lg border border-gray-700"
                   >
-                    <div className="symbol-image w-12 h-12 relative mr-3">
-                      <Image
-                        src={symbol.imagePath}
-                        alt={symbol.name}
-                        fill
-                        sizes="48px"
-                        className="object-contain"
-                      />
+                    <div className="symbol-emoji w-24 h-24 flex items-center justify-center mr-3 bg-gray-900 rounded-md">
+                      <span style={{ fontSize: '5.25rem' }}>
+                        {symbol.emoji || '❓'}
+                      </span>
                     </div>
                     <div>
                       <p className="font-medium text-white">{symbol.name}</p>
@@ -143,21 +130,21 @@ const PaytableModal: React.FC<PaytableModalProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Multiplier */}
               <div className="flex items-center p-3 bg-gray-800 rounded-lg border border-purple-700">
-                <div className="symbol-image w-12 h-12 relative mr-3 flex items-center justify-center bg-purple-900/30 rounded-full">
-                  <span className="text-xl font-bold text-purple-400">2x</span>
+                <div className="symbol-emoji w-24 h-24 flex items-center justify-center mr-3 bg-gray-900 rounded-md">
+                  <span style={{ fontSize: '5.25rem' }}>3️⃣</span>
                 </div>
                 <div>
                   <p className="font-medium text-white">Multiplier</p>
                   <p className="text-purple-400 text-sm">
-                    Multiplies win by 2x, 5x, or 10x
+                    Multiplies win by 3x, 5x, or 10x
                   </p>
                 </div>
               </div>
               
               {/* Free Spin */}
               <div className="flex items-center p-3 bg-gray-800 rounded-lg border border-green-700">
-                <div className="symbol-image w-12 h-12 relative mr-3 flex items-center justify-center bg-green-900/30 rounded-full">
-                  <span className="text-sm font-bold text-green-400">FREE</span>
+                <div className="symbol-emoji w-24 h-24 flex items-center justify-center mr-3 bg-gray-900 rounded-md">
+                  <span style={{ fontSize: '5.25rem' }}>🎰</span>
                 </div>
                 <div>
                   <p className="font-medium text-white">Free Spin</p>
@@ -253,12 +240,12 @@ const PaytableModal: React.FC<PaytableModalProps> = ({
         <section className="game-rules">
           <h3 className="text-lg font-bold text-blue-400 mb-3">Game Rules</h3>
           <ul className="space-y-2 text-gray-300 list-disc pl-5">
-            <li>Minimum bet is 5 TARDI tokens</li>
-            <li>Maximum bet is 100 TARDI tokens</li>
+            <li>Minimum bet is 5 SIMP tokens</li>
+            <li>Maximum bet is 100 SIMP tokens</li>
             <li>All wins are multiplied by the bet amount</li>
             <li>Multiplier symbols increase the win amount by their displayed value</li>
             <li>Free Spin symbols award additional spins without using tokens</li>
-            <li>Match the TARDI symbol on all positions for the jackpot</li>
+            <li>Match the SIMP symbol on all positions for the jackpot</li>
             <li>The RTP (Return to Player) is approximately 95%</li>
           </ul>
         </section>

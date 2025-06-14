@@ -1,0 +1,18 @@
+{
+  "name": "SimpCity Casino Slots",
+  "description": "D'oh! Play the official SimpCity casino slots with $SIMP tokens",
+  "version": "1.0.0",
+  "author": "SimpCity Team",
+  "blockchain": "Sui",
+  "token": {
+    "symbol": "SIMP",
+    "name": "SimpCity Token",
+    "decimals": 9
+  },
+  "social": {
+    "twitter": "@SimpcityProject",
+    "website": "https://simpcity.io",
+    "discord": "https://discord.gg/simpcity"
+  },
+  "tags": ["casino", "slots", "simpsons", "blockchain", "sui"]
+}

@@ -74,11 +74,12 @@ const Reel: React.FC<ReelProps> = ({ symbols, spinning, spinDelay }) => {
   
   // Generate random symbols for spinning animation
   const generateRandomSymbols = (): string[] => {
-    // Add more symbol types as needed based on your game config
+    // Use our new symbols from the updated game config
     const allPossibleSymbols = [
-      'low-gear', 'low-token', 'low-badge',
-      'mid-robot', 'mid-helmet', 'mid-future',
-      'high-tardi', 'multiplier-2x', 'free-spin'
+      'low-cherry', 'low-lemon', 'low-orange',
+      'mid-bell', 'mid-grapes', 'mid-watermelon',
+      'high-seven', 'high-bar', 'high-diamond',
+      'multiplier-3x', 'multiplier-5x', 'free-spin'
     ];
     
     return Array(3).fill(null).map(() => {

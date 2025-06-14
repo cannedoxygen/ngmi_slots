@@ -7,7 +7,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Custom colors for the cyberpunk theme
+        // SimpCity theme colors - exact match
+        'simpsons': {
+          'yellow': '#FED90F',
+          'blue': '#77CCFF',
+          'green': '#7CD142',
+          'orange': '#FF9900',
+          'red': '#E70013',
+          'purple': '#9370DB',
+          'light-blue': '#A1DEFF',
+        },
         'blue': {
           400: '#60a5fa',
           500: '#3b82f6',

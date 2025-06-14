@@ -1,8 +1,8 @@
 // src/hooks/useSlotMachine.ts
 import { useState, useEffect, useCallback } from 'react';
-import { useSuiWallet } from './useSuiWallet';
-import { useMoveCall } from './useMoveCall';
-import { useTokenBalance } from './useTokenBalance';
+import { useSolanaWallet } from './useSolanaWallet';
+import { useSolanaTransaction } from './useSolanaTransaction';
+// Removed the useMoveCall import since we're now using Solana
 import { gameConfig } from '../config/gameConfig';
 import { paylines } from '../config/paylines';
 import { evaluateWin } from '../utils/gameLogic';
@@ -31,9 +31,8 @@ export const useSlotMachine = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Hooks
-  const { connected, address } = useSuiWallet();
-  const { callMoveFunction, pendingTransaction } = useMoveCall();
-  const { balance, refetch: refetchBalance } = useTokenBalance();
+  const { connected, address, balance } = useSolanaWallet();
+  const { executeTransaction, pendingTransaction } = useSolanaTransaction();
 
   // Helper function to generate initial reels
   function getInitialReels(): string[][] {
@@ -97,34 +96,27 @@ export const useSlotMachine = () => {
         setFreeSpinsRemaining(prev => prev - 1);
       }
       
-      // For development, we'll simulate a blockchain call
-      // In production, this would call the actual smart contract
-      if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_MOCK_BLOCKCHAIN === 'true') {
+      // For development or when using mock mode, we'll simulate a spin
+      if (process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_MOCK_BLOCKCHAIN === 'true') {
         await simulateBlockchainSpin();
       } else {
+        // In production, execute a real Solana transaction
         // Generate a random seed for the spin
         const seed = generateRandomSeed();
         
-        // Call the Move contract's spin function
-        const result = await callMoveFunction({
-          packageId: gameConfig.contractAddress.packageId,
-          module: 'ngmi_slots',
-          function: 'spin',
-          arguments: [betAmount, seed],
-          gasBudget: 10000,
+        // Execute the Solana transaction
+        const result = await executeTransaction({
+          amount: betAmount,
+          seed
         });
         
         if (result.status === 'success') {
           setTransactionId(result.transactionId);
           setShowTransactionModal(true);
           
-          // Process the result - in a real app, you'd wait for transaction confirmation
-          // and then fetch the events from the blockchain
-          
-          // For now, we'll just refetch the balance after a delay
-          setTimeout(() => {
-            refetchBalance();
-          }, 3000);
+          // After transaction confirmation, simulate the spin result
+          // In a real app, you would listen for a program event from the blockchain
+          await simulateBlockchainSpin();
         } else {
           throw new Error(result.error || 'Transaction failed');
         }
@@ -134,10 +126,10 @@ export const useSlotMachine = () => {
       console.error('Spin error:', err);
     } finally {
       // In a real app, you would set spinning to false after the transaction is confirmed
-      // For development, we'll just use a timeout
+      // For development, we'll just use a timeout with slight variance
       setTimeout(() => {
         setSpinning(false);
-      }, 3000);
+      }, 2500 + Math.random() * 1000); // Random time between 2.5-3.5 seconds
     }
   }, [
     spinning, 
@@ -147,19 +139,30 @@ export const useSlotMachine = () => {
     betAmount, 
     freeSpinsRemaining, 
     resetGameState, 
-    callMoveFunction, 
-    refetchBalance
+    executeTransaction
   ]);
 
   // Simulate a blockchain spin for development
   const simulateBlockchainSpin = async () => {
     return new Promise<void>((resolve) => {
+      // Use a variable timeout to simulate network variance
+      const spinDelay = 1500 + Math.random() * 1000;
+      
       setTimeout(() => {
-        // Simulate random reel positions
+        // Simulate random reel positions with fresh randomization each time
         const reelPositions = getRandomReelPositions();
         
         // Evaluate win based on the random positions
         const result = evaluateWin(reelPositions, betAmount, paylines);
+        
+        // Log the result for debugging
+        console.log('Spin result:', {
+          reelPositions,
+          totalWin: result.totalWin,
+          multiplier: result.multiplier,
+          winningPaylines: result.winningPaylines,
+          freeSpins: result.freeSpins
+        });
         
         setLastSpinResult({
           reelPositions,
@@ -170,7 +173,7 @@ export const useSlotMachine = () => {
         });
         
         resolve();
-      }, 2000); // Simulate blockchain delay
+      }, spinDelay); // Simulate blockchain delay with variance
     });
   };
 
@@ -182,23 +185,30 @@ export const useSlotMachine = () => {
     for (let i = 0; i < 3; i++) {
       const reel: string[] = [];
       for (let j = 0; j < 3; j++) {
-        // Weighted random selection based on symbol probabilities
-        let random = Math.random();
-        let selectedSymbol = symbolKeys[0];
+        // Create a weighted probability array for better randomization
+        const weightedSymbols: string[] = [];
         
+        // Fill weighted array based on probability
         for (const symbol of symbolKeys) {
           const probability = gameConfig.symbols[symbol].probability;
-          if (random <= probability) {
-            selectedSymbol = symbol;
-            break;
+          // Scale probability by 100 to get integer count
+          const count = Math.round(probability * 100);
+          for (let k = 0; k < count; k++) {
+            weightedSymbols.push(symbol);
           }
-          random -= probability;
         }
+        
+        // Truly randomize using a different random value each time
+        const randomIndex = Math.floor(Math.random() * weightedSymbols.length);
+        const selectedSymbol = weightedSymbols[randomIndex];
         
         reel.push(selectedSymbol);
       }
       reelPositions.push(reel);
     }
+    
+    // Add console log to see results (for debugging)
+    console.log('New spin result:', reelPositions);
     
     return reelPositions;
   };

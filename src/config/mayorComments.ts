@@ -1,7 +1,7 @@
-// src/config/tngmiComments.ts
+// src/config/mayorComments.ts
 
 /**
- * T-NGMI character comments for different game states
+ * SimpCity commentator comments for different game states
  * These are displayed in the speech bubble next to the character
  */
 
@@ -25,7 +25,7 @@ interface CommentsGroup {
       "Fortune favors the bold... probably.",
       "Those reels aren't going to spin themselves!",
       "I've got a good feeling about this one!",
-      "TARDI tokens are calling your name!",
+      "SIMP tokens are calling your name!",
       "Win big or go home broke, that's what I always say!",
       "The blockchain awaits your next move..."
     ],
@@ -49,7 +49,7 @@ interface CommentsGroup {
       "The blockchain gods smile upon you!",
       "Not bad at all!",
       "That's what I'm talking about!",
-      "Ka-ching! More TARDI for you!",
+      "Ka-ching! More SIMP for you!",
       "You've got the touch!",
       "Now we're talking!"
     ],
@@ -58,12 +58,12 @@ interface CommentsGroup {
     bigWin: [
       "WHOA! HUGE WIN!",
       "You're on fire!",
-      "The TARDI is flowing today!",
+      "The SIMP is flowing today!",
       "I can't believe my eyes!",
       "That's how it's done!",
       "You're crushing it!",
       "Absolutely massive win!",
-      "Is this even legal?! So much TARDI!"
+      "Is this even legal?! So much SIMP!"
     ],
     
     // Jackpot comments
@@ -72,7 +72,7 @@ interface CommentsGroup {
       "THE LEGENDARY JACKPOT! UNBELIEVABLE!",
       "YOU'VE DONE IT! THE ULTIMATE WIN!",
       "HISTORY IN THE MAKING RIGHT HERE!",
-      "TARDI OVERFLOW ERROR! TOO MUCH WINNING!",
+      "SIMP OVERFLOW ERROR! TOO MUCH WINNING!",
       "SOMEONE CALL THE BLOCKCHAIN POLICE! THIS IS ROBBERY!",
       "THE PROPHECY IS TRUE! YOU'VE HIT THE JACKPOT!"
     ],
@@ -104,7 +104,7 @@ interface CommentsGroup {
     freeSpins: [
       "FREE SPINS! It's like free money!",
       "FREE SPINS! Let's make them count!",
-      "FREE SPINS! No TARDI needed!",
+      "FREE SPINS! No SIMP needed!",
       "FREE SPINS! This is where the magic happens!",
       "FREE SPINS! The best kind of spins!",
       "FREE SPINS! Extra chances to win big!"
@@ -117,7 +117,7 @@ interface CommentsGroup {
       "MULTIPLIER! The math is on your side now!",
       "MULTIPLIER! Let's pump those numbers up!",
       "MULTIPLIER! It's all about leverage, baby!",
-      "MULTIPLIER! More bang for your TARDI!"
+      "MULTIPLIER! More bang for your SIMP!"
     ]
   };
   
@@ -126,7 +126,7 @@ interface CommentsGroup {
    * @param state The current game state
    * @returns A random comment appropriate for the state
    */
-  export const getTNGMIComment = (state: keyof CommentsGroup): string => {
+  export const getMayorComment = (state: keyof CommentsGroup): string => {
     const commentGroup = comments[state] || comments.idle;
     const randomIndex = Math.floor(Math.random() * commentGroup.length);
     return commentGroup[randomIndex];

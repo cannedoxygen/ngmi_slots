@@ -1,15 +1,15 @@
-# T-NGMI Slots - Blockchain Slot Game on Sui
+# SimpCity Casino Slots - D'oh! Jackpot!
 
-A 3x3 slot machine game built on the Sui blockchain, featuring the T-NGMI character and TARDI token integration.
+A 3x3 slot machine game built on the Sui blockchain, featuring Homer Simpson-style characters and $SIMP token integration.
 
-![T-NGMI Slots Game Preview](public/assets/images/og-image.png)
+![SimpCity Casino Slots Preview](public/assets/images/og-image.png)
 
 ## Features
 
 - **3x3 Slot Game**: Classic slot machine gameplay with 5 paylines
 - **Blockchain-Powered**: Built on Sui blockchain for provably fair gaming
-- **Token Integration**: Play and win using TARDI tokens
-- **T-NGMI Character**: Enjoy commentary from the T-NGMI character as you play
+- **Token Integration**: Play and win using $SIMP tokens
+- **Mayor Quimby**: Enjoy commentary from Mayor Quimby as you play
 - **Special Symbols**: Multipliers, free spins, and jackpot opportunities
 - **Provably Fair**: Verify the fairness of each spin with client-side seeds
 

@@ -1,6 +1,5 @@
 // src/components/SlotMachine/Symbol.tsx
 import React from 'react';
-import Image from 'next/image';
 import { gameConfig } from '../../config/gameConfig';
 
 interface SymbolProps {
@@ -41,22 +40,17 @@ const Symbol: React.FC<SymbolProps> = ({
       data-symbol={type}
       data-position={position}
     >
-      {/* Symbol Image */}
+      {/* Symbol Emoji */}
       <div 
         className={`
-          symbol-image relative w-4/5 h-4/5
+          symbol-emoji relative w-4/5 h-4/5 flex items-center justify-center
           ${isJackpot ? 'animate-pulse' : ''}
           ${isMultiplier ? 'scale-110' : ''}
         `}
       >
-        <Image
-          src={symbolConfig.imagePath}
-          alt={symbolConfig.name}
-          fill
-          sizes="(max-width: 768px) 33vw, 120px"
-          className="object-contain"
-          priority={isJackpot} // Prioritize loading the jackpot symbol
-        />
+        <span style={{ fontSize: '7.5rem' }}>
+          {symbolConfig.emoji || '❓'}
+        </span>
       </div>
 
       {/* Multiplier Badge */}

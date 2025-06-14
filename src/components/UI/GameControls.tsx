@@ -1,8 +1,7 @@
 // src/components/UI/GameControls.tsx
 import React from 'react';
-import Button from '../common/Button';
-import { useSuiWallet } from '../../hooks/useSuiWallet';
-import { useTokenBalance } from '../../hooks/useTokenBalance';
+import { useSolanaWallet } from '../../hooks/useSolanaWallet';
+// Balance is now provided by useSolanaWallet
 
 interface GameControlsProps {
   onSpin: () => void;
@@ -21,8 +20,24 @@ const GameControls: React.FC<GameControlsProps> = ({
   disabled,
   freeSpinsActive = false
 }) => {
-  const { connected } = useSuiWallet();
-  const { balance } = useTokenBalance();
+  const { connected, balance } = useSolanaWallet();
+  
+  // Force balance update when component mounts
+  React.useEffect(() => {
+    // Force wallet balance update from main site
+    if ((window as any).updateSimpBalance) {
+      console.log('GameControls: Triggering main site updateSimpBalance function');
+      (window as any).updateSimpBalance();
+      
+      // Set up periodic updates
+      const intervalId = setInterval(() => {
+        (window as any).updateSimpBalance();
+      }, 5000);
+      
+      return () => clearInterval(intervalId);
+    }
+  }, []);
+  // Balance is now provided by useSolanaWallet
   
   // Define bet increment values
   const betIncrements = [5, 10, 25, 50, 100];
@@ -67,87 +82,246 @@ const GameControls: React.FC<GameControlsProps> = ({
   };
 
   return (
-    <div className="bg-gray-900 rounded-lg p-3 border border-gray-700 flex flex-col h-full">
+    <div style={{
+      background: '#fff',
+      borderRadius: '8px',
+      padding: '20px',
+      border: '3px solid #000',
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100%',
+      boxShadow: 'inset 0 0 10px rgba(0,0,0,0.1)'
+    }}>
       {/* Balance display */}
-      <div className="balance-display mb-6 p-2 bg-gray-800 rounded border border-gray-700 text-center">
-        <div className="text-xs text-gray-400">Balance:</div>
-        <div className="text-blue-300 font-medium">{balance} TARDI</div>
+      <div style={{
+        marginBottom: '20px',
+        padding: '15px',
+        background: '#FED90F',
+        borderRadius: '6px',
+        border: '2px solid #000',
+        textAlign: 'center'
+      }}>
+        <div style={{
+          fontSize: '0.9rem',
+          color: '#666',
+          fontFamily: 'Comic Sans MS, cursive'
+        }}>Balance:</div>
+        <div style={{
+          color: '#000',
+          fontFamily: 'Comic Sans MS, cursive',
+          fontSize: '1.3rem',
+          fontWeight: 'bold'
+        }}>{balance} SIMP</div>
       </div>
       
       {/* Bet Controls - only show if not in free spins mode */}
       {!freeSpinsActive && (
-        <div className="bet-controls space-y-4 mb-6">
-          <div className="flex items-center justify-between">
-            <span className="text-gray-400 text-sm font-medium">BET AMOUNT:</span>
+        <div style={{ marginBottom: '20px' }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: '15px'
+          }}>
+            <span style={{
+              color: '#000',
+              fontSize: '1rem',
+              fontWeight: 'bold',
+              fontFamily: 'Comic Sans MS, cursive'
+            }}>BET AMOUNT:</span>
           </div>
           
-          <div className="flex items-center justify-center">
-            <Button
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '10px'
+          }}>
+            <button
               onClick={handleDecreaseBet}
               disabled={spinning || disabled || betAmount <= 5}
-              variant="ghost"
-              size="small"
-              className="text-lg font-bold h-8 w-8 p-0 flex items-center justify-center"
+              style={{
+                background: betAmount <= 5 ? '#ccc' : '#77CCFF',
+                color: '#000',
+                border: '2px solid #000',
+                borderRadius: '50%',
+                width: '40px',
+                height: '40px',
+                fontFamily: 'Comic Sans MS, cursive',
+                fontSize: '1.5rem',
+                fontWeight: 'bold',
+                cursor: betAmount <= 5 ? 'default' : 'pointer',
+                boxShadow: '2px 2px 0px #000',
+                transition: 'all 0.2s ease',
+                opacity: spinning || disabled || betAmount <= 5 ? 0.5 : 1
+              }}
+              onMouseEnter={(e) => {
+                if (betAmount > 5 && !spinning && !disabled) {
+                  e.currentTarget.style.transform = 'translate(-1px, -1px)';
+                  e.currentTarget.style.boxShadow = '3px 3px 0px #000';
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translate(0, 0)';
+                e.currentTarget.style.boxShadow = '2px 2px 0px #000';
+              }}
             >
               -
-            </Button>
+            </button>
             
-            <div className="bet-amount-display mx-2 px-3 py-1 min-w-[100px] text-center bg-gray-800 rounded border border-gray-700">
-              <span className="font-medium text-blue-300">{betAmount}</span>
-              <span className="ml-1 text-xs text-gray-400">TARDI</span>
+            <div style={{
+              padding: '10px 20px',
+              minWidth: '120px',
+              textAlign: 'center',
+              background: '#FFE8B8',
+              borderRadius: '6px',
+              border: '2px solid #000'
+            }}>
+              <span style={{
+                fontWeight: 'bold',
+                color: '#000',
+                fontFamily: 'Comic Sans MS, cursive',
+                fontSize: '1.2rem'
+              }}>{betAmount}</span>
+              <span style={{
+                marginLeft: '5px',
+                fontSize: '0.9rem',
+                color: '#666',
+                fontFamily: 'Comic Sans MS, cursive'
+              }}>SIMP</span>
             </div>
             
-            <Button
+            <button
               onClick={handleIncreaseBet}
               disabled={spinning || disabled || betAmount >= balance}
-              variant="ghost"
-              size="small"
-              className="text-lg font-bold h-8 w-8 p-0 flex items-center justify-center"
+              style={{
+                background: betAmount >= balance ? '#ccc' : '#77CCFF',
+                color: '#000',
+                border: '2px solid #000',
+                borderRadius: '50%',
+                width: '40px',
+                height: '40px',
+                fontFamily: 'Comic Sans MS, cursive',
+                fontSize: '1.5rem',
+                fontWeight: 'bold',
+                cursor: betAmount >= balance ? 'default' : 'pointer',
+                boxShadow: '2px 2px 0px #000',
+                transition: 'all 0.2s ease',
+                opacity: spinning || disabled || betAmount >= balance ? 0.5 : 1
+              }}
+              onMouseEnter={(e) => {
+                if (betAmount < balance && !spinning && !disabled) {
+                  e.currentTarget.style.transform = 'translate(-1px, -1px)';
+                  e.currentTarget.style.boxShadow = '3px 3px 0px #000';
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translate(0, 0)';
+                e.currentTarget.style.boxShadow = '2px 2px 0px #000';
+              }}
             >
               +
-            </Button>
+            </button>
           </div>
           
-          <Button
+          <button
             onClick={handleMaxBet}
             disabled={spinning || disabled || betAmount >= balance}
-            variant="outline"
-            size="small"
-            className="w-full"
+            style={{
+              width: '100%',
+              marginTop: '15px',
+              background: betAmount >= balance ? '#ccc' : '#EB3C3C',
+              color: '#fff',
+              border: '2px solid #000',
+              borderRadius: '6px',
+              padding: '8px',
+              fontFamily: 'Comic Sans MS, cursive',
+              fontSize: '1rem',
+              cursor: betAmount >= balance ? 'default' : 'pointer',
+              boxShadow: '2px 2px 0px #000',
+              transition: 'all 0.2s ease',
+              opacity: spinning || disabled || betAmount >= balance ? 0.5 : 1
+            }}
+            onMouseEnter={(e) => {
+              if (betAmount < balance && !spinning && !disabled) {
+                e.currentTarget.style.transform = 'translate(-1px, -1px)';
+                e.currentTarget.style.boxShadow = '3px 3px 0px #000';
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translate(0, 0)';
+              e.currentTarget.style.boxShadow = '2px 2px 0px #000';
+            }}
           >
             MAX BET
-          </Button>
+          </button>
         </div>
       )}
       
       {/* Spacer to push the spin button to the bottom */}
-      <div className="flex-grow"></div>
+      <div style={{ flexGrow: 1 }}></div>
       
-      {/* Spin Button - Hidden on mobile as it's moved to bottom of slot machine */}
-      <div className="hidden lg:block mt-4">
-        <Button
+      {/* Spin Button */}
+      <div style={{
+        display: 'block',
+        marginTop: '20px'
+      }}>
+        <button
           onClick={onSpin}
           disabled={disabled || spinning}
-          isLoading={spinning}
-          variant="primary"
-          size="large"
-          className="spin-button w-full py-4 text-lg"
+          style={{
+            width: '100%',
+            padding: '20px',
+            background: spinning ? '#999' : '#EB3C3C',
+            color: '#fff',
+            border: '3px solid #000',
+            borderRadius: '8px',
+            fontFamily: 'Comic Sans MS, cursive',
+            fontSize: '1.5rem',
+            fontWeight: 'bold',
+            cursor: disabled || spinning ? 'default' : 'pointer',
+            boxShadow: '4px 4px 0px #000',
+            transition: 'all 0.2s ease',
+            opacity: disabled || spinning ? 0.7 : 1
+          }}
+          onMouseEnter={(e) => {
+            if (!disabled && !spinning) {
+              e.currentTarget.style.transform = 'translate(-2px, -2px)';
+              e.currentTarget.style.boxShadow = '6px 6px 0px #000';
+            }
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translate(0, 0)';
+            e.currentTarget.style.boxShadow = '3px 3px 0px #000';
+          }}
         >
           {spinning ? 'SPINNING...' : freeSpinsActive ? 'FREE SPIN' : 'SPIN'}
-        </Button>
+        </button>
       </div>
       
       {/* Not connected message */}
       {!connected && (
-        <div className="mt-3 text-center text-yellow-400 text-sm">
+        <div style={{
+          marginTop: '15px',
+          textAlign: 'center',
+          color: '#FFB800',
+          fontSize: '0.9rem',
+          fontFamily: 'Comic Sans MS, cursive'
+        }}>
           Connect your wallet to play
         </div>
       )}
       
       {/* Insufficient balance message */}
       {connected && balance < betAmount && !freeSpinsActive && (
-        <div className="mt-3 text-center text-yellow-400 text-sm">
-          Insufficient TARDI balance
+        <div style={{
+          marginTop: '15px',
+          textAlign: 'center',
+          color: '#EB3C3C',
+          fontSize: '0.9rem',
+          fontFamily: 'Comic Sans MS, cursive'
+        }}>
+          Insufficient SIMP balance
         </div>
       )}
     </div>

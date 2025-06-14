@@ -2,7 +2,8 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/": "pages/index.js",
   "/game": "pages/game.js",
-  "/history": "pages/history.js"
+  "/": "pages/index.js",
+  "/history": "pages/history.js",
+  "/api/burn-config": "pages/api/burn-config.js"
 }

@@ -1,12 +1,12 @@
-// src/components/UI/TNGMICharacter.tsx
+// src/components/UI/SimpCityCommentator.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 
-interface TNGMICharacterProps {
+interface SimpCityCommentatorProps {
   comment: string;
 }
 
-const TNGMICharacter: React.FC<TNGMICharacterProps> = ({ comment }) => {
+const SimpCityCommentator: React.FC<SimpCityCommentatorProps> = ({ comment }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [displayedComment, setDisplayedComment] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -75,8 +75,8 @@ const TNGMICharacter: React.FC<TNGMICharacterProps> = ({ comment }) => {
         `}
       >
         <Image
-          src="/assets/images/t-ngmi/profile.png"
-          alt="T-NGMI Character"
+          src="/images/businesses/business6b.png"
+          alt="SimpCity Commentator"
           fill
           sizes="(max-width: 768px) 96px, 128px"
           className="object-contain"
@@ -105,4 +105,4 @@ const TNGMICharacter: React.FC<TNGMICharacterProps> = ({ comment }) => {
   );
 };
 
-export default TNGMICharacter;
+export default SimpCityCommentator;

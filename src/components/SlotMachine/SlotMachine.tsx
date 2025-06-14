@@ -4,11 +4,12 @@ import Reel from './Reel';
 import PaylineDisplay from './PaylineDisplay';
 import GameControls from '../UI/GameControls';
 import WinDisplay from '../UI/WinDisplay';
-import TNGMICharacter from '../UI/TNGMICharacter';
-import TransactionModal from '../SuiWallet/TransactionModal';
+import TransactionModal from '../SolanaWallet/TransactionModal';
 import useSlotMachine from '../../hooks/useSlotMachine';
-import { getTNGMIComment } from '../../config/tngmiComments';
-import Button from '../common/Button';
+import SimpCityCommentator from '../UI/SimpCityCommentator';
+import { getMayorComment } from '../../config/mayorComments';
+import PaytableModal from '../UI/Modals/PaytableModal';
+import SettingsModal from '../UI/Modals/SettingsModal';
 
 const SlotMachine: React.FC = () => {
   const {
@@ -30,48 +31,102 @@ const SlotMachine: React.FC = () => {
     canPlay
   } = useSlotMachine();
 
-  const [tngmiComment, setTngmiComment] = useState<string>('');
+  const [comment, setComment] = useState<string>('');
   const [showPaytable, setShowPaytable] = useState<boolean>(false);
+  const [showSettings, setShowSettings] = useState<boolean>(false);
 
-  // Update T-NGMI character comments based on game state
+  // Check if it's the user's first visit to show the paytable automatically
+  useEffect(() => {
+    const hasVisitedBefore = localStorage.getItem('hasVisitedGameBefore');
+    if (!hasVisitedBefore) {
+      const timer = setTimeout(() => {
+        setShowPaytable(true);
+        localStorage.setItem('hasVisitedGameBefore', 'true');
+      }, 1500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, []);
+  
+  // Update comments based on game state
   useEffect(() => {
     if (error) {
-      setTngmiComment(getTNGMIComment('error'));
+      setComment(getMayorComment('error'));
     } else if (isWinner) {
       if (winAmount >= 100) {
-        setTngmiComment(getTNGMIComment('bigWin'));
+        setComment(getMayorComment('bigWin'));
       } else {
-        setTngmiComment(getTNGMIComment('win'));
+        setComment(getMayorComment('win'));
       }
     } else if (!spinning && activePaylines.length === 0 && reels.length > 0) {
-      setTngmiComment(getTNGMIComment('lose'));
+      setComment(getMayorComment('lose'));
     } else if (spinning) {
-      setTngmiComment(getTNGMIComment('spinning'));
+      setComment(getMayorComment('spinning'));
     } else {
-      setTngmiComment(getTNGMIComment('idle'));
+      setComment(getMayorComment('idle'));
     }
   }, [spinning, isWinner, winAmount, activePaylines, reels, error]);
 
   return (
-    <div className="game-container max-w-6xl mx-auto">
-      {/* Main game layout - using grid for better alignment */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        {/* Left side - Game controls and T-NGMI */}
-        <div className="lg:col-span-3 order-2 lg:order-1">
-          {/* T-NGMI Character Section */}
-          <div className="tngmi-section bg-gray-800 rounded-lg p-4 border border-blue-900/30 shadow-lg mb-4 h-64">
-            <h3 className="text-sm font-medium text-gray-400 mb-3">T-NGMI Says:</h3>
-            <div className="tngmi-container h-full flex items-center justify-center">
-              <TNGMICharacter comment={tngmiComment} />
+    <div style={{ 
+      maxWidth: '1200px', 
+      margin: '0 auto',
+      fontFamily: 'Comic Sans MS, cursive'
+    }}>
+      {/* Main game layout - using flexbox for better alignment */}
+      <div style={{ 
+        display: 'flex', 
+        gap: '20px',
+        flexWrap: 'wrap'
+      }}>
+        {/* Left side - Game controls */}
+        <div style={{ flex: '0 0 300px' }}>
+          {/* Character Section with Speech Bubble */}
+          <div style={{
+            background: '#FED90F',
+            borderRadius: '12px',
+            padding: '20px',
+            border: '4px solid #000',
+            boxShadow: '4px 4px 0px #000',
+            marginBottom: '20px',
+            height: '250px'
+          }}>
+            <h3 style={{ 
+              fontSize: '1.2rem',
+              fontWeight: 'bold',
+              color: '#000',
+              marginBottom: '15px',
+              fontFamily: 'Comic Sans MS, cursive'
+            }}>SimpCity Casino</h3>
+            <div style={{ height: 'calc(100% - 40px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <SimpCityCommentator 
+                comment={comment}
+                imagePath="/images/about-image.png"
+                isWin={isWinner}
+                isBigWin={winAmount >= 100}
+              />
             </div>
           </div>
           
-          {/* Game Controls Section - Made taller to match reels */}
-          <div className="controls-section bg-gray-800 rounded-lg p-4 border border-blue-900/30 shadow-lg flex flex-col">
-            <h3 className="text-sm font-medium text-gray-400 mb-3">Game Controls</h3>
+          {/* Game Controls Section */}
+          <div style={{
+            background: '#77CCFF',
+            borderRadius: '12px',
+            padding: '20px',
+            border: '4px solid #000',
+            boxShadow: '4px 4px 0px #000',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            <h3 style={{ 
+              fontSize: '1.2rem',
+              fontWeight: 'bold',
+              color: '#000',
+              marginBottom: '15px',
+              fontFamily: 'Comic Sans MS, cursive'
+            }}>Game Controls</h3>
             
-            {/* Using flex-grow to make GameControls fill available space */}
-            <div className="flex-grow">
+            <div style={{ flex: 1 }}>
               <GameControls 
                 onSpin={spin}
                 spinning={spinning}
@@ -84,8 +139,18 @@ const SlotMachine: React.FC = () => {
             
             {/* Free Spins Counter */}
             {freeSpinsRemaining > 0 && (
-              <div className="free-spins-counter text-center mt-auto pt-4">
-                <span className="inline-block bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+              <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                <span style={{
+                  display: 'inline-block',
+                  background: '#EB3C3C',
+                  color: '#fff',
+                  padding: '8px 16px',
+                  borderRadius: '20px',
+                  fontSize: '1rem',
+                  fontWeight: 'bold',
+                  border: '2px solid #000',
+                  fontFamily: 'Comic Sans MS, cursive'
+                }}>
                   {freeSpinsRemaining} Free Spin{freeSpinsRemaining !== 1 ? 's' : ''} Remaining
                 </span>
               </div>
@@ -93,7 +158,13 @@ const SlotMachine: React.FC = () => {
             
             {/* Error Message */}
             {error && (
-              <div className="error-message text-red-400 text-center mt-auto pt-4 text-sm">
+              <div style={{ 
+                color: '#EB3C3C',
+                textAlign: 'center',
+                marginTop: '20px',
+                fontSize: '1rem',
+                fontFamily: 'Comic Sans MS, cursive'
+              }}>
                 {error}
               </div>
             )}
@@ -101,39 +172,134 @@ const SlotMachine: React.FC = () => {
         </div>
         
         {/* Center - Slot Machine */}
-        <div className="slot-machine-container lg:col-span-9 order-1 lg:order-2 bg-gray-800 rounded-lg overflow-hidden border border-blue-900/30 shadow-lg">
+        <div style={{
+          flex: 1,
+          minWidth: '600px',
+          background: '#FED90F',
+          borderRadius: '12px',
+          overflow: 'hidden',
+          border: '4px solid #000',
+          boxShadow: '4px 4px 0px #000'
+        }}>
           {/* Machine Header */}
-          <div className="bg-gradient-to-r from-blue-900/50 via-purple-900/50 to-blue-900/50 p-3 flex justify-between items-center border-b border-blue-800">
-            <h2 className="text-xl font-bold text-blue-300 tracking-wider uppercase">T-NGMI Slots</h2>
+          <div style={{
+            background: 'linear-gradient(135deg, #77CCFF 0%, #A1DEFF 100%)',
+            padding: '15px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            borderBottom: '3px solid #000'
+          }}>
+            <h2 style={{ 
+              fontSize: '1.8rem',
+              fontWeight: 'bold',
+              color: '#000',
+              textTransform: 'uppercase',
+              letterSpacing: '2px',
+              fontFamily: 'Comic Sans MS, cursive'
+            }}>SimpCity Casino</h2>
             
-            {/* Win Display moved to header */}
-            {isWinner && (
-              <div className="win-display-compact">
-                <span className="bg-green-600/50 text-white px-3 py-1 rounded-full text-sm font-medium inline-flex items-center">
-                  WIN: <span className="font-bold ml-1">{winAmount}</span>
-                  {multiplier > 1 && (
-                    <span className="ml-2 bg-purple-600 px-1 rounded-full text-xs">x{multiplier}</span>
-                  )}
-                </span>
-              </div>
-            )}
-            
-            {/* Paytable Button */}
-            <Button 
-              variant="ghost" 
-              size="small" 
-              onClick={() => setShowPaytable(true)}
-              className="text-xs"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Paytable
-            </Button>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              {/* Win Display moved to header */}
+              {isWinner && (
+                <div>
+                  <span style={{
+                    background: '#EB3C3C',
+                    color: '#fff',
+                    padding: '6px 16px',
+                    borderRadius: '20px',
+                    fontSize: '1rem',
+                    fontWeight: 'bold',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    border: '2px solid #000',
+                    fontFamily: 'Comic Sans MS, cursive'
+                  }}>
+                    WIN: <span style={{ fontWeight: 'bold', marginLeft: '5px' }}>{winAmount}</span>
+                    {multiplier > 1 && (
+                      <span style={{
+                        marginLeft: '10px',
+                        background: '#8B69CD',
+                        padding: '2px 6px',
+                        borderRadius: '10px',
+                        fontSize: '0.8rem'
+                      }}>x{multiplier}</span>
+                    )}
+                  </span>
+                </div>
+              )}
+              
+              {/* Paytable Button */}
+              <button 
+                onClick={() => setShowPaytable(true)}
+                style={{
+                  background: '#FED90F',
+                  color: '#000',
+                  border: '2px solid #000',
+                  borderRadius: '6px',
+                  padding: '6px 12px',
+                  fontFamily: 'Comic Sans MS, cursive',
+                  fontSize: '0.9rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  boxShadow: '2px 2px 0px #000',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translate(-1px, -1px)';
+                  e.currentTarget.style.boxShadow = '3px 3px 0px #000';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translate(0, 0)';
+                  e.currentTarget.style.boxShadow = '2px 2px 0px #000';
+                }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Paytable
+              </button>
+              
+              {/* Settings Button */}
+              <button 
+                onClick={() => setShowSettings(true)}
+                style={{
+                  background: '#77CCFF',
+                  color: '#000',
+                  border: '2px solid #000',
+                  borderRadius: '6px',
+                  padding: '6px 12px',
+                  fontFamily: 'Comic Sans MS, cursive',
+                  fontSize: '0.9rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  boxShadow: '2px 2px 0px #000',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translate(-1px, -1px)';
+                  e.currentTarget.style.boxShadow = '3px 3px 0px #000';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translate(0, 0)';
+                  e.currentTarget.style.boxShadow = '2px 2px 0px #000';
+                }}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Settings
+              </button>
+            </div>
           </div>
 
           {/* Game Area */}
-          <div className="p-4 relative">
+          <div style={{ padding: '20px', position: 'relative', background: '#FED90F' }}>
             {/* Paylines Overlay */}
             <PaylineDisplay 
               activePaylines={activePaylines} 
@@ -142,7 +308,16 @@ const SlotMachine: React.FC = () => {
             />
 
             {/* Reels Container - Made more compact */}
-            <div className="reels-container grid grid-cols-3 gap-2 bg-gray-900 p-3 rounded-lg border border-gray-700">
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '10px',
+              background: '#fff',
+              padding: '15px',
+              borderRadius: '8px',
+              border: '3px solid #000',
+              boxShadow: 'inset 0 0 10px rgba(0,0,0,0.2)'
+            }}>
               {reels.map((reelSymbols, reelIndex) => (
                 <Reel 
                   key={`reel-${reelIndex}`} 
@@ -164,17 +339,31 @@ const SlotMachine: React.FC = () => {
           </div>
           
           {/* Action Button on mobile */}
-          <div className="p-4 lg:hidden">
-            <Button
+          <div style={{ 
+            padding: '20px',
+            display: 'block'
+          }}>
+            <button
               onClick={spin}
               disabled={!canPlay || spinning}
-              isLoading={spinning}
-              variant="primary"
-              size="large"
-              className="w-full"
+              style={{
+                width: '100%',
+                background: spinning ? '#999' : '#EB3C3C',
+                color: '#fff',
+                border: '3px solid #000',
+                borderRadius: '8px',
+                padding: '15px',
+                fontFamily: 'Comic Sans MS, cursive',
+                fontSize: '1.5rem',
+                fontWeight: 'bold',
+                cursor: !canPlay || spinning ? 'default' : 'pointer',
+                boxShadow: '4px 4px 0px #000',
+                transition: 'all 0.2s ease',
+                opacity: !canPlay || spinning ? 0.7 : 1
+              }}
             >
               {spinning ? 'SPINNING...' : freeSpinsRemaining > 0 ? 'FREE SPIN' : 'SPIN'}
-            </Button>
+            </button>
           </div>
         </div>
       </div>
@@ -186,6 +375,18 @@ const SlotMachine: React.FC = () => {
         transactionId={transactionId}
         action="Spin"
         amount={betAmount}
+      />
+      
+      {/* Paytable Modal */}
+      <PaytableModal 
+        isOpen={showPaytable}
+        onClose={() => setShowPaytable(false)}
+      />
+      
+      {/* Settings Modal */}
+      <SettingsModal 
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
       />
     </div>
   );

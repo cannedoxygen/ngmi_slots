@@ -24,8 +24,8 @@ const nextConfig = {
     },
     // Configure environment variables
     env: {
-      SUI_NETWORK: process.env.NEXT_PUBLIC_SUI_NETWORK || 'testnet',
-      PACKAGE_ID: process.env.NEXT_PUBLIC_PACKAGE_ID || '',
+      SOLANA_NETWORK: process.env.NEXT_PUBLIC_SOLANA_NETWORK || 'devnet',
+      PROGRAM_ID: process.env.NEXT_PUBLIC_PROGRAM_ID || '',
       TOKEN_ADDRESS: process.env.NEXT_PUBLIC_TOKEN_ADDRESS || '',
       MOCK_BLOCKCHAIN: process.env.NEXT_PUBLIC_MOCK_BLOCKCHAIN || 'true',
     },
